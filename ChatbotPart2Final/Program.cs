@@ -207,10 +207,9 @@ namespace ChatbotPart2Final
                     string randomTopic = rememberedTopics[rnd.Next(rememberedTopics.Count)];
                     Console.ForegroundColor = ConsoleColor.Magenta;
                     TypeResponse($"As someone who is curious about {randomTopic}, this is particularly important.");
-                    userPromptCounter = 0; // Reset counter so message shows every 3 prompts
+                    userPromptCounter = 0;
+
                 }
-
-
                 //if the user enters "exit" the program asks the user the chatbot asks the user to rate it and then the program displays a goodbye message and ends.
                 if (userInput.Contains("exit"))
                 {
@@ -220,6 +219,17 @@ namespace ChatbotPart2Final
 
                 bool found = false;
                 string detectedTopic = null;
+                string detectedSentiment = null;
+               
+
+                foreach (var sentiment in sentiments.Keys)
+                {
+                    if (userInput.Contains(sentiment))
+                    {
+                        detectedSentiment = sentiment;
+                        break;
+                    }
+                }
 
                 foreach (var keyword in responses.Keys)
                 {
@@ -228,6 +238,37 @@ namespace ChatbotPart2Final
                         detectedTopic = keyword;
                         break;
                     }
+                }
+
+
+                if (detectedSentiment != null && detectedTopic != null)
+                {
+                    Console.ForegroundColor = ConsoleColor.Magenta;
+                    TypeResponse($"\n{sentiments[detectedSentiment]}");
+
+                    // Then respond with a cybersecurity fact + follow-up question
+                    currentTopic = detectedTopic;
+                    string randomReply = responses[detectedTopic][rnd.Next(responses[detectedTopic].Length)];
+                    Console.ForegroundColor = ConsoleColor.White;
+                    // TypeResponse($"\n{randomReply}");
+
+                    if (followUps.ContainsKey(detectedTopic))
+                    {
+                        string followUp = followUps[detectedTopic][rnd.Next(followUps[detectedTopic].Length)];
+                        TypeResponse(followUp);
+                        awaitingFollowUpResponse = true;
+                        lastFollowUpTopic = detectedTopic;
+                    }
+
+
+                    else
+                    {
+                        TypeResponse($"Let me know if there is anything else I can assist you with {userName}?");
+                        awaitingFollowUpResponse = false;
+                        lastFollowUpTopic = null;
+                    }
+
+                    continue; // Skip rest of loop and wait for next input
                 }
 
                 if (currentTopic != null && (
@@ -418,6 +459,23 @@ namespace ChatbotPart2Final
                     $"staying safe online!");
                 Console.WriteLine($"[DEBUG] userInterestTopic: {userInterestTopic}, userExpressedInterest: {userExpressedInterest}");
             }
+
+
         }
+
+        static int inputCounter = 0;
+        static string chatHistoryPath = "chathistory.txt";
+
+        static void LogUserInput(string input)
+        {
+            inputCounter++;
+            File.AppendAllText(chatHistoryPath, $"User: {input}\n");
+
+            if (inputCounter % 3 == 0)
+            {
+                TypeResponse("Chat history saved to chathistory.txt\n");
+            }
+        }
+
     }
 }
