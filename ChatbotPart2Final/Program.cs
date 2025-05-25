@@ -198,6 +198,7 @@ namespace ChatbotPart2Final
                 Console.WriteLine($"{userName}: ");
                 //Takes user input, converts it to lower case, and trims it to ensure that the response is understood by the program.
                 string userInput = Console.ReadLine()?.ToLower().Trim();
+                LogUserInput(userInput);
                 CheckForKeywords(userInput);
 
                 userPromptCounter++;
