@@ -217,6 +217,55 @@ namespace ChatbotPart2Final
                     }
                 }
 
+                if (currentTopic != null && (
+                userInput.Contains("explain") || userInput.Contains("more") || userInput.Contains("i don't understand") || userInput.Contains("what do you mean")))
+                {
+                    string[] extraResponses = responses[currentTopic];
+                    string deeperResponse = extraResponses[rnd.Next(extraResponses.Length)];
+                    Console.ForegroundColor = ConsoleColor.White;
+                    TypeResponse($"\nSure, here's more on {currentTopic}:");
+                    TypeResponse(deeperResponse);
+                    continue;
+                }
+                if (awaitingFollowUpResponse)
+                {
+                    if (userInput.Contains("yes") || userInput.Contains("confused") || userInput.Contains("explain more") || userInput.Contains("i don't understand"))
+
+                    {
+                        Console.ForegroundColor = ConsoleColor.White;
+                        string[] extraTips = responses[lastFollowUpTopic];
+                        TypeResponse(extraTips[rnd.Next(extraTips.Length)]);
+
+                        string[] followUpQs = followUps[lastFollowUpTopic];
+                        followUpIndex++;
+
+                        if (followUpIndex < followUpQs.Length)
+                        {
+                            TypeResponse(followUpQs[followUpIndex]);
+                            inConversation = true;
+                        }
+                        else
+                        {
+                            TypeResponse("Would you like to explore another topic?");
+                            // inConversation = false;
+
+                        }
+
+                        // Keep awaiting input if more follow-ups exist
+                        awaitingFollowUpResponse = followUpIndex < followUpQs.Length;
+                        continue;
+                    }
+                    else if (userInput.Contains("no"))
+                    {
+                        TypeResponse("No problem! Let me know if you'd like to learn about something else.");
+                        awaitingFollowUpResponse = false;
+                        inConversation = false;
+                        followUpIndex = 0;
+                        continue;
+                    }
+                }
+
+
 
                 foreach (var keyword in responses.Keys)
                 {
