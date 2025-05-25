@@ -198,6 +198,19 @@ namespace ChatbotPart2Final
                 Console.WriteLine($"{userName}: ");
                 //Takes user input, converts it to lower case, and trims it to ensure that the response is understood by the program.
                 string userInput = Console.ReadLine()?.ToLower().Trim();
+                CheckForKeywords(userInput);
+
+                userPromptCounter++;
+
+                if (userPromptCounter >= 3 && userExpressedInterest && !string.IsNullOrEmpty(userInterestTopic))
+                {
+                    string randomTopic = rememberedTopics[rnd.Next(rememberedTopics.Count)];
+                    Console.ForegroundColor = ConsoleColor.Magenta;
+                    TypeResponse($"As someone who is curious about {randomTopic}, this is particularly important.");
+                    userPromptCounter = 0; // Reset counter so message shows every 3 prompts
+                }
+
+
                 //if the user enters "exit" the program asks the user the chatbot asks the user to rate it and then the program displays a goodbye message and ends.
                 if (userInput.Contains("exit"))
                 {
