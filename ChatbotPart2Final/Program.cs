@@ -466,6 +466,7 @@ namespace ChatbotPart2Final
         static int inputCounter = 0;
         static string chatHistoryPath = "chathistory.txt";
 
+
         static void LogUserInput(string input)
         {
             inputCounter++;
