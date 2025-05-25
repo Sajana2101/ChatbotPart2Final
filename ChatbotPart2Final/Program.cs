@@ -63,21 +63,78 @@ namespace ChatbotPart2Final
             //set colour to greem
             Console.ForegroundColor = ConsoleColor.Green;
             //Display a short messaage before displaying menu of queries 
-            TypeResponse("Let's delve into the world of cybersecurity where you can learn how to beat those pesky cybercriminals!");
-            //Displays menu of queries that the chatbot can answer
-            Console.WriteLine("Here are some things you can ask me about:" +
-                "\n- Basic conversations (Hi, Hello, How are you)" +
-                "\n- Ask me what I can do" +
-                "\n- Ake me what my purpose is" +
-                "\n- Cybersecurity Basics " +
-                "\n- Phishing " +
-                "\n- Malware." +
-                "\n- Password Saftey " +
-                "\n- Safe online browsing " +
-                "\n- Help" +
-                "\n- Exit");
-            //While loop which keeps the chatbot running until the user enters "exit" to leave the program
-            //While loop ensures that the user can ask as many questions as they want 
+            Dictionary<string, string[]> responses = new Dictionary<string, string[]>
+
+        {
+
+            { "phishing", new string[]
+                {
+                    "Phishing is when attackers trick you into giving personal info, often through fake emails.",
+                    "Phishing attacks often mimic trusted sources. Always verify links before clicking.",
+                    "Avoid phishing by checking sender details and not clicking unknown links.",
+                    "Phishing can steal passwords and credit card info. Be skeptical of urgent messages.",
+                    "Always hover over links to check authenticity before clicking in suspicious emails."
+                }
+            },
+            { "malware", new string[]
+                {
+                    "Malware is software designed to harm or exploit devices and networks.",
+                    "Antivirus programs help detect and remove malware threats.",
+                    "Malware includes viruses, worms, Trojans, ransomware, and spyware.",
+                    "Keep your OS and apps updated to prevent malware infections.",
+                    "Avoid downloading unknown attachments to reduce malware risk."
+                }
+            },
+            { "password", new string[]
+                {
+                    "Use long, complex passwords and avoid reusing them.",
+                    "Consider using a password manager to store secure passwords.",
+                    "Never share your passwords with anyone.",
+                    "Two-factor authentication adds an extra layer of password security.",
+                    "Avoid using personal info like birthdays in passwords."
+                }
+            },
+            { "cybersecurity", new string[]
+                {
+                    "Cybersecurity is about protecting systems, networks, and data from digital attacks.",
+                    "Strong cybersecurity practices include firewalls, encryption, and user awareness.",
+                    "Good cybersecurity habits can protect your identity and data online.",
+                    "Cybersecurity is a shared responsibility – always think before you click.",
+                    "Education is key to staying safe in today’s digital world."
+                }
+            },
+            { "virus", new string[]
+                {
+                    "Computer viruses replicate and spread, often causing data loss or corruption.",
+                    "Viruses can come through infected files, USBs, or websites.",
+                    "Install antivirus software to help prevent and remove computer viruses.",
+                    "Email attachments are a common way viruses are spread.",
+                    "Avoid pirated software – it can contain hidden viruses."
+                }
+            },
+            { "browsing", new string[]
+                {
+                    "Use HTTPS websites for safer browsing.",
+                    "Private/incognito mode doesn’t make you invisible, but avoids storing history.",
+                    "Be cautious of pop-ups and fake download buttons.",
+                    "Avoid entering sensitive info on public Wi-Fi without a VPN.",
+                    "Browser extensions can be risky — only install from trusted sources."
+                }
+            }
+        };
+
+
+
+
+
+
+
+
+
+
+
+
+
             while (true)
             {
                 Console.ForegroundColor = ConsoleColor.White;
