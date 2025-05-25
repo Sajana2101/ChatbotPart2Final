@@ -154,6 +154,19 @@ namespace ChatbotPart2Final
 
 
 
+            Dictionary<string, string> sentiments = new Dictionary<string, string>()
+{
+    { "worried", "It's completely understandable to feel that way. Would you like me to provide you with some tips on that topic?" },
+    { "curious", "Curiosity is great! I can help you learn more about this topic." },
+    { "excited", "I'm glad you're excited! Let's dive into some interesting info." },
+    { "sad", "I'm sorry to hear you're feeling sad about this. Let's work through this together" },
+    { "angry", "Feeling angry is natural with these threats. Let's find ways to tackle them." },
+    { "frustrated", "I understand feeling frustrated. I'm here to help with any questions you have." },
+    { "scared", "It's okay to feel scared. Knowledge is your best defense against cyber threats." },
+    { "concerned", "Your concern is valid. I can share tips to help you stay safe." },
+    { "anxious", "Feeling anxious is normal. Let's work through your worries together." },
+    {"overwhelmed","Feeling this way is comepletely normal, let me share some a tip to help you feel better" }
+};
 
 
 
