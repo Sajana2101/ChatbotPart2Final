@@ -21,7 +21,8 @@ namespace ChatbotPart2Final
 
         static void Main(string[] args)
         {
-
+            int followUpIndex = 0;
+            bool inConversation = false;
 
             Console.Title = "Cybersecurity Chatbot";
             //Set colour 
@@ -177,34 +178,80 @@ namespace ChatbotPart2Final
 };
 
 
-
-
-
+           
+            string currentTopic = null;
+            string lastFollowUpTopic = null;
+            bool awaitingFollowUpResponse = false;
 
 
 
             while (true)
             {
+
+                if (!awaitingFollowUpResponse && !inConversation)
+                {
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.WriteLine($"\n{userName}, what can I assist you with? ");
+                }
                 Console.ForegroundColor = ConsoleColor.White;
                 //User's entered name 
                 Console.WriteLine($"{userName}: ");
                 //Takes user input, converts it to lower case, and trims it to ensure that the response is understood by the program.
                 string userInput = Console.ReadLine()?.ToLower().Trim();
                 //if the user enters "exit" the program asks the user the chatbot asks the user to rate it and then the program displays a goodbye message and ends.
-                if (userInput == "exit")
+                if (userInput.Contains("exit"))
                 {
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    TypeResponse($"Maven: Thank you for your time {userName}!");
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    TypeResponse($"Maven: Before you go , please rate your experience from 1 to 5 stars:");
-                    Console.ForegroundColor = ConsoleColor.White;
-                    string rating = Console.ReadLine();
-                    Console.ForegroundColor = ConsoleColor.Cyan;
-                    TypeResponse($"Maven: Thank you for rating me {rating} star(s)! Stay safe out there! Goodbye {userName}!");
+                    TypeResponse($"Goodbye {userName}! Stay safe online.");
                     break;
                 }
-                //if the user enters anything other than exit, input and the username is passed to the this method to provide the appropriate response
-              //  HandleUserQuery(input: userInput, userName: userName);
+
+                bool found = false;
+                string detectedTopic = null;
+
+                foreach (var keyword in responses.Keys)
+                {
+                    if (userInput.Contains(keyword))
+                    {
+                        detectedTopic = keyword;
+                        break;
+                    }
+                }
+
+
+                foreach (var keyword in responses.Keys)
+                {
+                    if (userInput.Contains(keyword))
+                    {
+                        currentTopic = keyword;
+                        string randomReply = responses[keyword][rnd.Next(responses[keyword].Length)];
+                        Console.ForegroundColor = ConsoleColor.White;
+                        TypeResponse($"\n{randomReply}");
+
+                        if (followUps.ContainsKey(keyword))
+                        {
+                            string followUp = followUps[keyword][rnd.Next(followUps[keyword].Length)];
+                            TypeResponse(followUp);
+                            awaitingFollowUpResponse = true;
+                            lastFollowUpTopic = keyword;
+                        }
+                        else
+                        {
+                            TypeResponse("Would you like to explore another topic?");
+                            awaitingFollowUpResponse = false;
+                            lastFollowUpTopic = null;
+                        }
+
+                        found = true;
+                        break;
+                    }
+
+                }
+
+                if (!found)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    TypeResponse("I'm sorry, I don't understand that topic. Try asking about phishing, malware, password, virus, browsing, or cybersecurity.");
+                }
             }
         }
 
