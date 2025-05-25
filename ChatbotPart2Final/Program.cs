@@ -221,6 +221,7 @@ namespace ChatbotPart2Final
                 foreach (var keyword in responses.Keys)
                 {
                     if (userInput.Contains(keyword))
+
                     {
                         currentTopic = keyword;
                         string randomReply = responses[keyword][rnd.Next(responses[keyword].Length)];
