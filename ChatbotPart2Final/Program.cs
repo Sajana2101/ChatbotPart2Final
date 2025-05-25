@@ -247,11 +247,11 @@ namespace ChatbotPart2Final
                         else
                         {
                             TypeResponse("Would you like to explore another topic?");
-                            // inConversation = false;
+                           
 
                         }
 
-                        // Keep awaiting input if more follow-ups exist
+                      
                         awaitingFollowUpResponse = followUpIndex < followUpQs.Length;
                         continue;
                     }
@@ -363,5 +363,48 @@ namespace ChatbotPart2Final
             Console.WriteLine();
         }
 
+
+        static void CheckForKeywords(string input)
+        {
+            string[] interestKeywords = { "interested", "curious", "keen", "fascinated", "interesting", "worried", "scared", "favourite" };
+            string[] cybersecurityTopics = { "cybersecurity", "malware", "viruses", "spam", "scams", "phishing", "ransomware", "trojan", "worm", "spyware" };
+
+            string loweredInput = input.ToLower();
+
+            bool foundInterest = false;
+            bool foundTopic = false;
+            string matchedTopic = "";
+
+            foreach (string interest in interestKeywords)
+            {
+                if (loweredInput.Contains(interest))
+                {
+                    foundInterest = true;
+                    break;
+                }
+            }
+
+            foreach (string topic in cybersecurityTopics)
+            {
+                if (loweredInput.Contains(topic))
+                {
+                    matchedTopic = topic;
+                    foundTopic = true;
+                    if (!rememberedTopics.Contains(topic)) rememberedTopics.Add(topic);
+                }
+            }
+
+            // If both found (not necessarily in same line)
+            if (foundInterest && foundTopic)
+            {
+                userInterestTopic = matchedTopic;
+                userExpressedInterest = true;
+                userPromptCounter = 0; // Reset counter when interest is expressed
+                Console.ForegroundColor = ConsoleColor.DarkCyan;
+                Console.WriteLine($"Maven: That's great you're interested in {matchedTopic}, I'll remember that! It's a crucial part " +
+                    $"staying safe online!");
+                Console.WriteLine($"[DEBUG] userInterestTopic: {userInterestTopic}, userExpressedInterest: {userExpressedInterest}");
+            }
+        }
     }
 }
