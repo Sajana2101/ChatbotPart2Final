@@ -123,7 +123,34 @@ namespace ChatbotPart2Final
             }
         };
 
-
+          
+            Dictionary<string, string[]> followUps = new Dictionary<string, string[]>
+        {
+            { "phishing", new[] {
+                "Have you ever received a suspicious email or message?",
+                "Would you like tips on how to identify fake emails?"
+            }},
+            { "malware", new[] {
+                "Are you currently using antivirus software?",
+                "Would you like to learn how malware spreads?"
+            }},
+            { "password", new[] {
+                "Do you know if your passwords have ever been leaked?",
+                "Would you like a tip on creating strong passwords?"
+            }},
+            { "cybersecurity", new[] {
+                "Are you using a firewall or antivirus at home?",
+                "Want to hear more about keeping your network secure?"
+            }},
+            { "virus", new[] {
+                "Have you ever had a virus on your computer?",
+                "Would you like to know how to remove one safely?"
+            }},
+            { "browsing", new[] {
+                "Do you use a VPN when browsing on public Wi-Fi?",
+                "Would you like to hear tips for safe online shopping?"
+            }}
+        };
 
 
 
