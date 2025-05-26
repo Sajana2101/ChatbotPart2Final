@@ -14,12 +14,8 @@ class ChatbotPart2Final
     static string userInterestTopic = "";
     static int userPromptCounter = 0;
     static bool userExpressedInterest = false;
-
     static void Main(string[] args)
-
-
     {
-
         // Keeps track of which follow-up reply to use next in the conversation
         int followUpIndex = 0;
         // Indicates whether the chatbot is currently engaged in an ongoing conversation
@@ -28,8 +24,6 @@ class ChatbotPart2Final
         Console.Title = "Maven Cybersecurity ChatBot";
         // Sets the text color of the console output to dark red for better visual style
         Console.ForegroundColor = ConsoleColor.DarkRed;
-
-
         // ASCII Art
         Console.WriteLine(@"
                                               Be Aware                                          
@@ -80,7 +74,6 @@ class ChatbotPart2Final
     "Yo! Maven here — your personal cyber safety sidekick."
 };
 
-
         // Randomly select and display a cybersecurity tip
         Random random = new Random();
         int tipIndex = random.Next(tips.Length);
@@ -127,9 +120,7 @@ class ChatbotPart2Final
 
         // Dictionary mapping topics to arrays of random responses for variety
         Dictionary<string, string[]> responses = new Dictionary<string, string[]>
-
-        {
-
+        { 
             { "phishing", new string[]
                 {
                     "Phishing is when attackers trick you into giving personal info, often through fake emails.",
@@ -226,39 +217,44 @@ class ChatbotPart2Final
             },
 
            { "vpn", new string[]
-{
-    "A VPN encrypts your internet traffic and hides your IP address for privacy.",
-    "Use a VPN on public Wi-Fi to protect your personal data.",
-    "VPNs can help bypass geographic restrictions safely and securely.",
-    "Not all VPNs are equal — choose a reputable, no-log provider.",
-    "A VPN adds a layer of security, especially on unsecured networks."
-}},
-{ "firewall", new string[]
-{
-    "Firewalls monitor and control incoming/outgoing network traffic.",
-    "Use both hardware and software firewalls for better protection.",
-    "A firewall helps block unauthorized access to your system.",
-    "Make sure your firewall is enabled and properly configured.",
-    "Firewalls act as a gatekeeper between your device and the internet."
-}},
+                {
+                 "A VPN encrypts your internet traffic and hides your IP address for privacy.",
+                 "Use a VPN on public Wi-Fi to protect your personal data.",
+                 "VPNs can help bypass geographic restrictions safely and securely.",
+                 "Not all VPNs are equal — choose a reputable, no-log provider.",
+                 "A VPN adds a layer of security, especially on unsecured networks."
+                }
+            },
 
-{ "defender", new string[]
-{
-    "Microsoft Defender is a built-in antivirus for Windows.",
-    "Defender provides real-time protection and threat detection.",
-    "Keep Defender updated to ensure it catches the latest threats.",
-    "Use Defender alongside a firewall for stronger security.",
-    "Windows Defender SmartScreen can help block malicious websites."
-}},
+            { "firewall", new string[]
+               {
+                 "Firewalls monitor and control incoming/outgoing network traffic.",
+                 "Use both hardware and software firewalls for better protection.",
+                 "A firewall helps block unauthorized access to your system.",
+                 "Make sure your firewall is enabled and properly configured.",
+                 "Firewalls act as a gatekeeper between your device and the internet."
+                }
+            },
 
-{ "encryption", new string[]
-{
-    "Encryption scrambles data so only authorized users can read it.",
-    "Always use encrypted messaging apps for private conversations.",
-    "End-to-end encryption ensures only the sender and receiver can see the message.",
-    "Encrypted websites use HTTPS — avoid HTTP for sensitive transactions.",
-    "Encryption protects your files and communications from prying eyes."
-}},
+            { "defender", new string[]
+                {
+                 "Microsoft Defender is a built-in antivirus for Windows.",
+                 "Defender provides real-time protection and threat detection.",
+                 "Keep Defender updated to ensure it catches the latest threats.",
+                 "Use Defender alongside a firewall for stronger security.",
+                 "Windows Defender SmartScreen can help block malicious websites."
+                }
+            },
+
+            { "encryption", new string[]
+                {
+                   "Encryption scrambles data so only authorized users can read it.",
+                   "Always use encrypted messaging apps for private conversations.",
+                   "End-to-end encryption ensures only the sender and receiver can see the message.",
+                   "Encrypted websites use HTTPS — avoid HTTP for sensitive transactions.",
+                   "Encryption protects your files and communications from prying eyes."
+                }
+            },
         };
 
 
@@ -311,63 +307,75 @@ class ChatbotPart2Final
 
 
             { "ransomware", new[] {
-    "Do you know how to back up your files securely?",
-    "Want to hear how ransomware spreads and how to avoid it?",
-     "Would you like another tip?",
-     "Would you like to learn more?",
-      "Would you like me to expand on this topic?"
-}},
-{ "social engineering", new[] {
-    "Have you ever been tricked into giving personal info?",
-    "Would you like tips on spotting manipulation techniques?",
-     "Would you like another tip?",
+                "Do you know how to back up your files securely?",
+                "Want to hear how ransomware spreads and how to avoid it?",
+                "Would you like another tip?",
                 "Would you like to learn more?",
-                 "Would you like me to expand on this topic?"
-}},
-{ "updates", new[] {
-    "Do you keep your software and OS up to date?",
-    "Would you like to know why updates are so important?",
-     "Would you like another tip?",
-                "Would you like to learn more?",
-                 "Would you like me to expand on this topic?"
-}},
-{ "wifi", new[] {
-    "Do you know if your home Wi-Fi is secured properly?",
-    "Would you like tips on staying safe on public Wi-Fi?",
-     "Would you like another tip?",
-                "Would you like to learn more?",
-                 "Would you like me to expand on this topic?"
-}},
-{ "vpn", new[] {
-    "Are you currently using a VPN for your devices?",
-    "Would you like to know which VPNs are most secure?",
-     "Would you like another tip?",
-                "Would you like to learn more?",
-                 "Would you like me to expand on this topic?"
-}},
-{ "firewall", new[] {
-    "Do you know if your firewall is turned on and configured properly?",
-    "Would you like tips on setting up a personal firewall?",
-     "Would you like another tip?",
-                "Would you like to learn more?",
-                 "Would you like me to expand on this topic?"
-}},
+                "Would you like me to expand on this topic?"
+                }
+            },
 
-{ "defender", new[] {
-    "Do you use Windows Defender for real-time protection?",
-    "Would you like to know how to run a quick scan with Defender?" ,
-    "Would you like another tip?",
+            { "social engineering", new[] {
+                "Have you ever been tricked into giving personal info?",
+                "Would you like tips on spotting manipulation techniques?",
+                "Would you like another tip?",
                 "Would you like to learn more?",
+                "Would you like me to expand on this topic?"
+                }
+            },
+            { "updates", new[] {
+                "Do you keep your software and OS up to date?",
+                "Would you like to know why updates are so important?",
+                "Would you like another tip?",
+                "Would you like to learn more?",
+                "Would you like me to expand on this topic?"
+                }
+            },
+
+            { "wifi", new[] {
+                "Do you know if your home Wi-Fi is secured properly?",
+                "Would you like tips on staying safe on public Wi-Fi?",
+                "Would you like another tip?",
+                "Would you like to learn more?",
+                 "Would you like me to expand on this topic?"
+                }
+            },
+
+            {   "vpn", new[] {
+                 "Are you currently using a VPN for your devices?",
+                 "Would you like to know which VPNs are most secure?",
+                 "Would you like another tip?",
+                "Would you like to learn more?",
+                 "Would you like me to expand on this topic?"
+                }
+            },
+
+            { "firewall", new[] {
+                "Do you know if your firewall is turned on and configured properly?",
+                "Would you like tips on setting up a personal firewall?",
+                 "Would you like another tip?",
+                "Would you like to learn more?",
+                 "Would you like me to expand on this topic?"
+                }
+            },
+
+             { "defender", new[] {
+                  "Do you use Windows Defender for real-time protection?",
+                  "Would you like to know how to run a quick scan with Defender?" ,
+                  "Would you like another tip?",
+                  "Would you like to learn more?",
                  "Would you like me to expand on this topic?"
 
-}},
-{ "encryption", new[] {
-    "Do you use encrypted apps like Signal or WhatsApp?",
-    "Would you like to learn how to encrypt your files or emails?",
-     "Would you like another tip?",
+                }
+            },
+            { "encryption", new[] {
+                 "Do you use encrypted apps like Signal or WhatsApp?",
+                 "Would you like to learn how to encrypt your files or emails?",
+                 "Would you like another tip?",
                 "Would you like to learn more?",
                  "Would you like me to expand on this topic?"
-}},
+                }
+            },
 
 
 
