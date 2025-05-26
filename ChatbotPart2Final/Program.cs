@@ -6,9 +6,11 @@ using System.Collections.Generic;
 
 class ChatbotPart2Final
 {
+    // Random number generator instance for selecting random responses or other random choices
     static Random rnd = new Random();
-
+    // List to store cybersecurity-related keywords or topics that the user mentions during the chat
     static List<string> rememberedTopics = new List<string>();
+    // Stores a specific topic the user has expressed interest in (e.g., "malware" or "phishing")
     static string userInterestTopic = "";
     static int userPromptCounter = 0;
     static bool userExpressedInterest = false;
@@ -17,10 +19,15 @@ class ChatbotPart2Final
 
     static void Main(string[] args)
 
+
     {
+        // Keeps track of which follow-up reply to use next in the conversation
         int followUpIndex = 0;
+        // Indicates whether the chatbot is currently engaged in an ongoing conversation
         bool inConversation = false;
+        // Sets the title of the console window to "Maven Cybersecurity ChatBot"
         Console.Title = "Maven Cybersecurity ChatBot";
+        // Sets the text color of the console output to dark red for better visual style
         Console.ForegroundColor = ConsoleColor.DarkRed;
 
 
@@ -48,9 +55,10 @@ class ChatbotPart2Final
                                                ..-...                                               
                                Defend your device against cyberthreats
 ");
-
+        // Play a greeting audio file and display a welcome message
         PlayGreetingAudio("MavenAudio.wav");
         TypeResponse("Welcome to Maven Cybersecurity ChatBot!");
+        // Array of cybersecurity tips
         string[] tips = {
     "Tip of the Day: Use a password manager to create and store strong, unique passwords.",
     "Tip of the Day: Enable two-factor authentication (2FA) wherever possible.",
@@ -63,41 +71,62 @@ class ChatbotPart2Final
     "Tip of the Day: Don't overshare personal information on social media.",
     "Tip of the Day: Verify the identity of anyone requesting sensitive information."
 };
+        // Array of greeting phrases
+        string[] greetings = new string[]
+{
+    "Hello there! I'm Maven, your cybersecurity companion. ",
+    "Hey! Maven here, secure and ready to assist!",
+    "Hi! I’m Maven. Let’s explore some digital safety tips.",
+    "Greetings, friend! I am ready to assist you today!",
+    "Yo! Maven here — your personal cyber safety sidekick."
+};
 
-        // Randomly select a tip
+
+        // Randomly select and display a cybersecurity tip
         Random random = new Random();
         int tipIndex = random.Next(tips.Length);
         string selectedTip = tips[tipIndex];
 
-        // Display the tip
+        // Randomly select and display a greeting
         Console.WriteLine("═══════════════════════════════════════════════════════════════");
         TypeResponse(tips[tipIndex]);
         Console.WriteLine("═══════════════════════════════════════════════════════════════\n");
+        Random rnd = new Random();
+        string randomGreeting = greetings[rnd.Next(greetings.Length)];
+        TypeResponse(randomGreeting);
         TypeResponse("What is your name:");
         string username = Console.ReadLine();
-
+        // Personalized greeting
         Console.ForegroundColor = ConsoleColor.Green;
         Console.WriteLine("********************************");
         Console.WriteLine($"* Welcome {username}                    *");
         Console.WriteLine("********************************");
 
-        TypeResponse($"Hello {username}, I am Maven, your cybersecurity guide!\n");
-
+        TypeResponse($"Hello {username}, Nice to meet you!\n");
+        // Introduce the chatbot's purpose
         TypeResponse("Let's delve into the world of cybersecurity where you can learn how to beat those pesky cybercriminals!");
         //Displays menu of queries that the chatbot can answer
         Console.WriteLine("Here are some things you can ask me about:" +
-            "\n- Basic conversations (Hi, Hello, How are you)" +
-            "\n- Ask me what I can do" +
-            "\n- Ake me what my purpose is" +
-            "\n- Cybersecurity Basics " +
+            
+            "\n- Cybersecurity" +
+            "\n  Virus"+
             "\n- Phishing " +
             "\n- Malware." +
             "\n- Password Saftey " +
             "\n- Safe online browsing " +
-            
+            "\n- Ransomware " +
+            "\n- Social Engineering " +
+            "\n- Security Updates " +
+            "\n- Wifi " +
+            "\n- VPN " +
+            "\n- Firewalls " +
+          
+            "\n- Encryption " +
+            "\n- Windows Defender " +
+
             "\n- Exit");
 
-        // Dictionary of keyword-responses
+        // Dictionary mapping topics to arrays of random responses for variety
         Dictionary<string, string[]> responses = new Dictionary<string, string[]>
 
         {
@@ -213,14 +242,7 @@ class ChatbotPart2Final
     "Make sure your firewall is enabled and properly configured.",
     "Firewalls act as a gatekeeper between your device and the internet."
 }},
-{ "antivirus", new string[]
-{
-    "Antivirus software scans for and removes malicious software.",
-    "Keep your antivirus updated to recognize the latest threats.",
-    "Run regular full scans to ensure your system stays clean.",
-    "Antivirus helps defend against malware, trojans, and worms.",
-    "Don’t rely solely on antivirus — practice safe browsing habits too."
-}},
+
 { "defender", new string[]
 {
     "Microsoft Defender is a built-in antivirus for Windows.",
@@ -240,7 +262,8 @@ class ChatbotPart2Final
 }},
         };
 
-        // Follow-up questions for each topic
+
+        // Dictionary for follow-up questions based on topic
         Dictionary<string, string[]> followUps = new Dictionary<string, string[]>
         {
             { "phishing", new[] {
@@ -330,13 +353,7 @@ class ChatbotPart2Final
                 "Would you like to learn more?",
                  "Would you like me to expand on this topic?"
 }},
-{ "antivirus", new[] {
-    "Do you have antivirus software installed on your devices?",
-    "Would you like help choosing a trusted antivirus program?",
-     "Would you like another tip?",
-                "Would you like to learn more?",
-                 "Would you like me to expand on this topic?"
-}},
+
 { "defender", new[] {
     "Do you use Windows Defender for real-time protection?",
     "Would you like to know how to run a quick scan with Defender?" ,
@@ -359,6 +376,8 @@ class ChatbotPart2Final
 
 
 
+        //dictionary with different responses for sentiments 
+
         Dictionary<string, string> sentiments = new Dictionary<string, string>()
 {
     { "worried", "It's completely understandable to feel that way. Would you like me to provide you with some tips on that topic?" },
@@ -373,51 +392,56 @@ class ChatbotPart2Final
     {"overwhelmed","Feeling this way is comepletely normal, let me share some a tip to help you feel better" },
      {"Stressed","I understand your frustration, let me help you through this with a helpful tip" }
 };
-
+        // Initialize chatbot state tracking variables
         string currentTopic = null;
         string lastFollowUpTopic = null;
         bool awaitingFollowUpResponse = false;
 
         while (true)
         {
+            // Ask the user what they want help with if not in a follow-up or ongoing conversation
 
             if (!awaitingFollowUpResponse && !inConversation)
             {
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine($"\n{username}, what can I assist you with? ");
             }
-
+            // Read user input and convert to lowercase for easy matching
             Console.ForegroundColor = ConsoleColor.Yellow;
             string input = Console.ReadLine().ToLower();
 
-
+            // Log input and check for keywords (user-defined methods)
             LogUserInput(input);
             CheckForKeywords(input);
+            // Display response header
 
+            Console.WriteLine("═══════════════════════════════════════════════════════════════");
+            Console.WriteLine("                         RESPONSE                              ");
 
-
+            Console.WriteLine("═══════════════════════════════════════════════════════════════");
             userPromptCounter++;
-
+            // After 3 prompts, reference user's previously expressed interest
             if (userPromptCounter >= 3 && userExpressedInterest && !string.IsNullOrEmpty(userInterestTopic))
             {
                 string randomTopic = rememberedTopics[rnd.Next(rememberedTopics.Count)];
                 Console.ForegroundColor = ConsoleColor.Magenta;
                 TypeResponse($"As someone who is curious about {randomTopic}, this is particularly important.");
-                userPromptCounter = 0; // Reset counter so message shows every 3 prompts
+                userPromptCounter = 0; //Exit loop
             }
 
-
+               // Check if the user wants to exit
             if (input.Contains("exit"))
             {
                 TypeResponse($"Goodbye {username}! Stay safe online.");
                 break;
             }
+            //variables to hold matched sentiment and topic
 
             bool found = false;
 
             string detectedSentiment = null;
             string detectedTopic = null;
-
+            // Detect topic based on input
             foreach (var sentiment in sentiments.Keys)
             {
                 if (input.Contains(sentiment))
@@ -426,7 +450,7 @@ class ChatbotPart2Final
                     break;
                 }
             }
-
+            // Detect topic based on input
             foreach (var keyword in responses.Keys)
             {
                 if (input.Contains(keyword))
@@ -435,17 +459,17 @@ class ChatbotPart2Final
                     break;
                 }
             }
-
+            // Respond if both a sentiment and a topic were detected
             if (detectedSentiment != null && detectedTopic != null)
             {
                 Console.ForegroundColor = ConsoleColor.Magenta;
                 TypeResponse($"\n{sentiments[detectedSentiment]}");
 
-
+                // Respond with a random reply for the topic
                 currentTopic = detectedTopic;
                 string randomReply = responses[detectedTopic][rnd.Next(responses[detectedTopic].Length)];
                 Console.ForegroundColor = ConsoleColor.White;
-
+                // If follow-ups exist for the topic, ask one
                 if (followUps.ContainsKey(detectedTopic))
                 {
                     string followUp = followUps[detectedTopic][rnd.Next(followUps[detectedTopic].Length)];
@@ -462,10 +486,10 @@ class ChatbotPart2Final
                     lastFollowUpTopic = null;
                 }
 
-                continue; // Skip rest of loop and wait for next input
+                continue; //move to the next loop iteration
             }
 
-            // Detect confusion or request for details
+            // Handle follow-up explanations if user asks for more info
             if (currentTopic != null && (
                 input.Contains("explain") || input.Contains("more") || input.Contains("i don't understand") || input.Contains("what do you mean")))
             {
@@ -476,11 +500,13 @@ class ChatbotPart2Final
                 TypeResponse(deeperResponse);
                 continue;
             }
+            // Handle response to previous follow-up
             if (awaitingFollowUpResponse)
             {
                 if (input.Contains("yes") || input.Contains("confused") || input.Contains("explain more") || input.Contains("i don't understand"))
 
                 {
+                    // Give additional information about the follow-up topic
                     Console.ForegroundColor = ConsoleColor.White;
                     string[] extraTips = responses[lastFollowUpTopic];
                     TypeResponse(extraTips[rnd.Next(extraTips.Length)]);
@@ -495,17 +521,20 @@ class ChatbotPart2Final
                     }
                     else
                     {
-                        TypeResponse("Would you like to explore another topic?");
-                        // inConversation = false;
+                        TypeResponse("What other topic would you like to explore?");
+                       
 
                     }
 
-                    // Keep awaiting input if more follow-ups exist
+                    // Continue awaiting follow-up if more remain
+
                     awaitingFollowUpResponse = followUpIndex < followUpQs.Length;
                     continue;
                 }
-                else if (input.Contains("no"))
+                //extra words that indicate the user does not want to continue with the rest of the topics
+                else if (input.Contains("nothing")|| input.Contains("no topic")|| input.Contains("no thanks"))
                 {
+                    // User does not want to continue on the topic
                     TypeResponse("No problem! Let me know if you'd like to learn about something else.");
                     awaitingFollowUpResponse = false;
                     inConversation = false;
@@ -514,25 +543,31 @@ class ChatbotPart2Final
                 }
             }
 
-
+            // Try matching a topic again if no sentiment was detected earlier
             foreach (var keyword in responses.Keys)
             {
+                // Check if the user's input contains the current keyword
                 if (input.Contains(keyword))
                 {
                     currentTopic = keyword;
+                    // Select a random response from the list of responses for that keyword
                     string randomReply = responses[keyword][rnd.Next(responses[keyword].Length)];
                     Console.ForegroundColor = ConsoleColor.White;
                     TypeResponse($"\n{randomReply}");
-
+                    // Check if follow-up questions are available for this topic
                     if (followUps.ContainsKey(keyword))
                     {
+                        // Select and display a random follow-up question
                         string followUp = followUps[keyword][rnd.Next(followUps[keyword].Length)];
                         TypeResponse(followUp);
+
                         awaitingFollowUpResponse = true;
+                        // Store the topic to track which topic the follow-up is for
                         lastFollowUpTopic = keyword;
                     }
                     else
                     {
+                         // If no follow-up is available, ask if the user wants to explore another topic
                         TypeResponse("Would you like to explore another topic?");
                         awaitingFollowUpResponse = false;
                         lastFollowUpTopic = null;
@@ -544,6 +579,7 @@ class ChatbotPart2Final
 
             }
 
+            // If no topic was understood at all
             if (!found)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
@@ -554,45 +590,55 @@ class ChatbotPart2Final
         }
 
     }
-
+    // Method to simulate a typewriter effect by printing one character at a time
     static void TypeResponse(string message)
     {
         foreach (char c in message)
         {
+            // Print each character
             Console.Write(c);
+            // Pause briefly to simulate typing
             Thread.Sleep(25);
         }
         Console.WriteLine();
     }
-
+    // Method to play a greeting audio file synchronously
     static void PlayGreetingAudio(string filePath)
     {
         try
         {
+            // Construct full path to the audio file
             string fullPath = Path.Combine(Directory.GetCurrentDirectory(), filePath);
+            // Check if the file exists
             if (File.Exists(fullPath))
             {
                 SoundPlayer player = new SoundPlayer(fullPath);
+                // Play the audio and wait for it to finish
                 player.PlaySync();
             }
             else
             {
+
+                // Display error if file not found
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"Error: the file '{filePath}' was not found.");
             }
         }
         catch (Exception ex)
         {
+            // Handle any exceptions that occur during audio playback
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"Error playing audio: {ex.Message}");
         }
 
 
     }
-
+    // Method to check if the user's input shows interest in any cybersecurity topic, takes user input as parameter
     static void CheckForKeywords(string input)
-    {
+    {// List of words that indicate interest
         string[] interestKeywords = { "interested", "curious", "keen", "fascinated", "interesting", "worried", "scared", "favourite" };
+
+        // List of relevant cybersecurity topics
         string[] cybersecurityTopics = { "cybersecurity", "malware", "viruses", "spam", "scams", "phishing", "ransomware", "trojan", "worm", "spyware" };
 
         string loweredInput = input.ToLower();
@@ -600,7 +646,7 @@ class ChatbotPart2Final
         bool foundInterest = false;
         bool foundTopic = false;
         string matchedTopic = "";
-
+        // Check if the user expressed interest
         foreach (string interest in interestKeywords)
         {
             if (loweredInput.Contains(interest))
@@ -609,38 +655,44 @@ class ChatbotPart2Final
                 break;
             }
         }
-
+        // Check if the user mentioned a cybersecurity topic
         foreach (string topic in cybersecurityTopics)
         {
             if (loweredInput.Contains(topic))
             {
                 matchedTopic = topic;
                 foundTopic = true;
+                // Remember the topic if it hasn't already been stored
                 if (!rememberedTopics.Contains(topic)) rememberedTopics.Add(topic);
             }
         }
 
-        // If both found (not necessarily in same line)
+        // If both interest and topic are detected
         if (foundInterest && foundTopic)
         {
             userInterestTopic = matchedTopic;
             userExpressedInterest = true;
-            userPromptCounter = 0; // Reset counter when interest is expressed
+            // Reset counter for personalized response logic
+
+            userPromptCounter = 0; 
             Console.ForegroundColor = ConsoleColor.DarkCyan;
+            // Respond to the user with a memory acknowledgment
             TypeResponse($"Maven: That's great you're interested in {matchedTopic}, I'll remember that! It's a crucial part " +
                 $"staying safe online!");
 
         }
     }
-
+    // Counter to keep track of number of user inputs
     static int inputCounter = 0;
+    // File path for saving chat history
     static string chatHistoryPath = "chathistory.txt";
-
+    // Method to log user input to a text file
     static void LogUserInput(string input)
     {
+        // Append the user's input to the chat history file
         inputCounter++;
         File.AppendAllText(chatHistoryPath, $"User: {input}\n");
-
+        // Every 3rd input, notify the user that the history was saved
         if (inputCounter % 3 == 0)
         {
             TypeResponse("Chat history saved to chathistory.txt\n");
