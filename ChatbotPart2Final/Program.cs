@@ -1,35 +1,31 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using System.Media;
+using System.Threading;
+using System.Collections.Generic;
 
-
-namespace ChatbotPart2Final
+class ChatbotPart2Final
 {
-    class Program
+    static Random rnd = new Random();
+
+    static List<string> rememberedTopics = new List<string>();
+    static string userInterestTopic = "";
+    static int userPromptCounter = 0;
+    static bool userExpressedInterest = false;
+
+
+
+    static void Main(string[] args)
 
     {
+        int followUpIndex = 0;
+        bool inConversation = false;
+        Console.Title = "Maven Cybersecurity ChatBot";
+        Console.ForegroundColor = ConsoleColor.DarkRed;
 
-        static Random rnd = new Random();
-        static List<string> rememberedTopics = new List<string>();
-        static string userInterestTopic = "";
-        static int userPromptCounter = 0;
-        static bool userExpressedInterest = false;
 
-        static void Main(string[] args)
-        {
-            int followUpIndex = 0;
-            bool inConversation = false;
-
-            Console.Title = "Cybersecurity Chatbot";
-            //Set colour 
-            Console.ForegroundColor = ConsoleColor.DarkRed;
-            //ASCII Art
-            Console.WriteLine(@"
-                                                            
+        // ASCII Art
+        Console.WriteLine(@"
                                               Be Aware                                          
                                    .:-=*#%####%####%%######+--:.                                    
                                   :##%#=:................::=####:.                                  
@@ -38,7 +34,7 @@ namespace ChatbotPart2Final
                                   .*#-.     .+#*:.:+#*..     .#%..                                  
                                   .*#=.    ..#*.. ..-+..     :#*.                                   
                                   .-#+.   ..-#+::::::::..   .+#-                                    
-                                  ..%#:   .+###########%.  ..##:                                    
+                                  ..%#:   .+###########%.  ..##:                                  
                                     =#=.  .+####=.:####%.  .+#+.                                    
                                     .##.  .+####*.+####%.  :*#:.                                    
                                     .=#*...+####+.*####%...+#+.                                     
@@ -51,28 +47,58 @@ namespace ChatbotPart2Final
                                              ..#####:.                                              
                                                ..-...                                               
                                Defend your device against cyberthreats
-                                                                                                   
-                                                                                                
 ");
-            //Calls the method that plays the greeting audio
-            PlayGreetingAudio("MavenAudio.wav");
-            //Asks the user to enter their name
-            //TypeResponse() is a method used instead of conosle.writeline to "type" out the chatbot's response to create a more conversational feel
-            TypeResponse("What is your name?");
-            //set colour
-            Console.ForegroundColor = ConsoleColor.White;
-            //Takes user name as input 
-            string userName = Console.ReadLine();
-            //set colour to red 
-            Console.ForegroundColor = ConsoleColor.DarkRed;
-            //display user name with coloured boarder
-            Console.WriteLine("********************************");
-            Console.WriteLine($"* Welcome {userName}                    *");
-            Console.WriteLine("********************************");
-            //set colour to greem
-            Console.ForegroundColor = ConsoleColor.Green;
-            //Display a short messaage before displaying menu of queries 
-            Dictionary<string, string[]> responses = new Dictionary<string, string[]>
+
+        PlayGreetingAudio("MavenAudio.wav");
+        TypeResponse("Welcome to Maven Cybersecurity ChatBot!");
+        string[] tips = {
+    "Tip of the Day: Use a password manager to create and store strong, unique passwords.",
+    "Tip of the Day: Enable two-factor authentication (2FA) wherever possible.",
+    "Tip of the Day: Keep your software and operating system up to date.",
+    "Tip of the Day: Never click on suspicious links in emails or messages.",
+    "Tip of the Day: Back up important data regularly to an external drive or cloud service.",
+    "Tip of the Day: Use antivirus software and keep it updated.",
+    "Tip of the Day: Be cautious when using public Wi-Fi—use a VPN if possible.",
+    "Tip of the Day: Lock your devices when not in use.",
+    "Tip of the Day: Don't overshare personal information on social media.",
+    "Tip of the Day: Verify the identity of anyone requesting sensitive information."
+};
+
+        // Randomly select a tip
+        Random random = new Random();
+        int tipIndex = random.Next(tips.Length);
+        string selectedTip = tips[tipIndex];
+
+        // Display the tip
+        Console.WriteLine("═══════════════════════════════════════════════════════════════");
+        TypeResponse(tips[tipIndex]);
+        Console.WriteLine("═══════════════════════════════════════════════════════════════\n");
+        TypeResponse("What is your name:");
+        string username = Console.ReadLine();
+
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine("********************************");
+        Console.WriteLine($"* Welcome {username}                    *");
+        Console.WriteLine("********************************");
+
+        TypeResponse($"Hello {username}, I am Maven, your cybersecurity guide!\n");
+
+        TypeResponse("Let's delve into the world of cybersecurity where you can learn how to beat those pesky cybercriminals!");
+        //Displays menu of queries that the chatbot can answer
+        Console.WriteLine("Here are some things you can ask me about:" +
+            "\n- Basic conversations (Hi, Hello, How are you)" +
+            "\n- Ask me what I can do" +
+            "\n- Ake me what my purpose is" +
+            "\n- Cybersecurity Basics " +
+            "\n- Phishing " +
+            "\n- Malware." +
+            "\n- Password Saftey " +
+            "\n- Safe online browsing " +
+            
+            "\n- Exit");
+
+        // Dictionary of keyword-responses
+        Dictionary<string, string[]> responses = new Dictionary<string, string[]>
 
         {
 
@@ -129,41 +155,211 @@ namespace ChatbotPart2Final
                     "Avoid entering sensitive info on public Wi-Fi without a VPN.",
                     "Browser extensions can be risky — only install from trusted sources."
                 }
-            }
+            },
+
+
+             { "ransomware", new string[]
+                {
+                  "Ransomware locks or encrypts your files and demands payment for access.",
+                  "Never pay a ransom — it doesn’t guarantee file recovery and encourages more attacks.",
+                  "Keep backups of important data to recover from ransomware attacks.",
+                  "Ransomware often spreads through phishing emails and malicious downloads.",
+                  "Use up-to-date antivirus software to detect and block ransomware."
+                }
+            },
+            { "social engineering", new string[]
+               {
+                  "Social engineering manipulates people into giving up confidential info.",
+                  "Attackers often pretend to be trusted individuals or authorities.",
+                  "Be cautious of unexpected calls or requests for sensitive data.",
+                  "Always verify someone's identity before sharing personal info.",
+                  "Security awareness can help prevent social engineering attacks."
+                }
+            },
+            
+            { "updates", new string[]
+                {
+                  "Regular updates patch security flaws that attackers exploit.",
+                  "Enable automatic updates for your operating system and apps.",
+                  "Outdated software is a common gateway for cyberattacks.",
+                  "Check for updates frequently — especially for browsers and plugins.",
+                  "Security updates are critical for staying protected online."
+                }
+            },
+
+           { "wifi", new string[]
+                {
+                 "Public Wi-Fi can be insecure — avoid entering sensitive info on it.",
+                 "Use a VPN to protect your data on public wireless networks.",
+                 "Always change default router passwords at home.",
+                 "Secure your home Wi-Fi with WPA3 encryption if possible.",
+                 "Limit the number of devices allowed to connect to your network."
+                }
+            },
+
+           { "vpn", new string[]
+{
+    "A VPN encrypts your internet traffic and hides your IP address for privacy.",
+    "Use a VPN on public Wi-Fi to protect your personal data.",
+    "VPNs can help bypass geographic restrictions safely and securely.",
+    "Not all VPNs are equal — choose a reputable, no-log provider.",
+    "A VPN adds a layer of security, especially on unsecured networks."
+}},
+{ "firewall", new string[]
+{
+    "Firewalls monitor and control incoming/outgoing network traffic.",
+    "Use both hardware and software firewalls for better protection.",
+    "A firewall helps block unauthorized access to your system.",
+    "Make sure your firewall is enabled and properly configured.",
+    "Firewalls act as a gatekeeper between your device and the internet."
+}},
+{ "antivirus", new string[]
+{
+    "Antivirus software scans for and removes malicious software.",
+    "Keep your antivirus updated to recognize the latest threats.",
+    "Run regular full scans to ensure your system stays clean.",
+    "Antivirus helps defend against malware, trojans, and worms.",
+    "Don’t rely solely on antivirus — practice safe browsing habits too."
+}},
+{ "defender", new string[]
+{
+    "Microsoft Defender is a built-in antivirus for Windows.",
+    "Defender provides real-time protection and threat detection.",
+    "Keep Defender updated to ensure it catches the latest threats.",
+    "Use Defender alongside a firewall for stronger security.",
+    "Windows Defender SmartScreen can help block malicious websites."
+}},
+
+{ "encryption", new string[]
+{
+    "Encryption scrambles data so only authorized users can read it.",
+    "Always use encrypted messaging apps for private conversations.",
+    "End-to-end encryption ensures only the sender and receiver can see the message.",
+    "Encrypted websites use HTTPS — avoid HTTP for sensitive transactions.",
+    "Encryption protects your files and communications from prying eyes."
+}},
         };
 
-          
-            Dictionary<string, string[]> followUps = new Dictionary<string, string[]>
+        // Follow-up questions for each topic
+        Dictionary<string, string[]> followUps = new Dictionary<string, string[]>
         {
             { "phishing", new[] {
                 "Have you ever received a suspicious email or message?",
-                "Would you like tips on how to identify fake emails?"
+                "Would you like tips on how to identify fake emails?",
+                "Would you like another tip?",
+                "Would you like to learn more?",
+                "Would you like me to expand on this topic?"
             }},
             { "malware", new[] {
                 "Are you currently using antivirus software?",
-                "Would you like to learn how malware spreads?"
+                "Would you like to learn how malware spreads?",
+                "Would you like another tip?",
+                "Would you like to learn more?",
+                 "Would you like me to expand on this topic?"
             }},
             { "password", new[] {
                 "Do you know if your passwords have ever been leaked?",
-                "Would you like a tip on creating strong passwords?"
+                "Would you like a tip on creating strong passwords?",
+                 "Would you like another tip?",
+                "Would you like to learn more?",
+                 "Would you like me to expand on this topic?"
             }},
             { "cybersecurity", new[] {
                 "Are you using a firewall or antivirus at home?",
-                "Want to hear more about keeping your network secure?"
+                "Want to hear more about keeping your network secure?",
+                 "Would you like another tip?",
+                "Would you like to learn more?",
+                 "Would you like me to expand on this topic?"
             }},
             { "virus", new[] {
                 "Have you ever had a virus on your computer?",
-                "Would you like to know how to remove one safely?"
+                "Would you like to know how to remove one safely?",
+                 "Would you like another tip?",
+                "Would you like to learn more?",
+                 "Would you like me to expand on this topic?"
             }},
             { "browsing", new[] {
                 "Do you use a VPN when browsing on public Wi-Fi?",
-                "Would you like to hear tips for safe online shopping?"
-            }}
+                "Would you like to hear tips for safe online shopping?",
+                 "Would you like another tip?",
+                "Would you like to learn more?",
+                 "Would you like me to expand on this topic?"
+            }},
+
+
+
+            { "ransomware", new[] {
+    "Do you know how to back up your files securely?",
+    "Want to hear how ransomware spreads and how to avoid it?",
+     "Would you like another tip?",
+     "Would you like to learn more?",
+      "Would you like me to expand on this topic?"
+}},
+{ "social engineering", new[] {
+    "Have you ever been tricked into giving personal info?",
+    "Would you like tips on spotting manipulation techniques?",
+     "Would you like another tip?",
+                "Would you like to learn more?",
+                 "Would you like me to expand on this topic?"
+}},
+{ "updates", new[] {
+    "Do you keep your software and OS up to date?",
+    "Would you like to know why updates are so important?",
+     "Would you like another tip?",
+                "Would you like to learn more?",
+                 "Would you like me to expand on this topic?"
+}},
+{ "wifi", new[] {
+    "Do you know if your home Wi-Fi is secured properly?",
+    "Would you like tips on staying safe on public Wi-Fi?",
+     "Would you like another tip?",
+                "Would you like to learn more?",
+                 "Would you like me to expand on this topic?"
+}},
+{ "vpn", new[] {
+    "Are you currently using a VPN for your devices?",
+    "Would you like to know which VPNs are most secure?",
+     "Would you like another tip?",
+                "Would you like to learn more?",
+                 "Would you like me to expand on this topic?"
+}},
+{ "firewall", new[] {
+    "Do you know if your firewall is turned on and configured properly?",
+    "Would you like tips on setting up a personal firewall?",
+     "Would you like another tip?",
+                "Would you like to learn more?",
+                 "Would you like me to expand on this topic?"
+}},
+{ "antivirus", new[] {
+    "Do you have antivirus software installed on your devices?",
+    "Would you like help choosing a trusted antivirus program?",
+     "Would you like another tip?",
+                "Would you like to learn more?",
+                 "Would you like me to expand on this topic?"
+}},
+{ "defender", new[] {
+    "Do you use Windows Defender for real-time protection?",
+    "Would you like to know how to run a quick scan with Defender?" ,
+    "Would you like another tip?",
+                "Would you like to learn more?",
+                 "Would you like me to expand on this topic?"
+
+}},
+{ "encryption", new[] {
+    "Do you use encrypted apps like Signal or WhatsApp?",
+    "Would you like to learn how to encrypt your files or emails?",
+     "Would you like another tip?",
+                "Would you like to learn more?",
+                 "Would you like me to expand on this topic?"
+}},
+
+
+
         };
 
 
 
-            Dictionary<string, string> sentiments = new Dictionary<string, string>()
+        Dictionary<string, string> sentiments = new Dictionary<string, string>()
 {
     { "worried", "It's completely understandable to feel that way. Would you like me to provide you with some tips on that topic?" },
     { "curious", "Curiosity is great! I can help you learn more about this topic." },
@@ -174,310 +370,282 @@ namespace ChatbotPart2Final
     { "scared", "It's okay to feel scared. Knowledge is your best defense against cyber threats." },
     { "concerned", "Your concern is valid. I can share tips to help you stay safe." },
     { "anxious", "Feeling anxious is normal. Let's work through your worries together." },
-    {"overwhelmed","Feeling this way is comepletely normal, let me share some a tip to help you feel better" }
+    {"overwhelmed","Feeling this way is comepletely normal, let me share some a tip to help you feel better" },
+     {"Stressed","I understand your frustration, let me help you through this with a helpful tip" }
 };
 
+        string currentTopic = null;
+        string lastFollowUpTopic = null;
+        bool awaitingFollowUpResponse = false;
 
-           
-            string currentTopic = null;
-            string lastFollowUpTopic = null;
-            bool awaitingFollowUpResponse = false;
+        while (true)
+        {
 
-
-
-            while (true)
+            if (!awaitingFollowUpResponse && !inConversation)
             {
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine($"\n{username}, what can I assist you with? ");
+            }
 
-                if (!awaitingFollowUpResponse && !inConversation)
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            string input = Console.ReadLine().ToLower();
+
+
+            LogUserInput(input);
+            CheckForKeywords(input);
+
+
+
+            userPromptCounter++;
+
+            if (userPromptCounter >= 3 && userExpressedInterest && !string.IsNullOrEmpty(userInterestTopic))
+            {
+                string randomTopic = rememberedTopics[rnd.Next(rememberedTopics.Count)];
+                Console.ForegroundColor = ConsoleColor.Magenta;
+                TypeResponse($"As someone who is curious about {randomTopic}, this is particularly important.");
+                userPromptCounter = 0; // Reset counter so message shows every 3 prompts
+            }
+
+
+            if (input.Contains("exit"))
+            {
+                TypeResponse($"Goodbye {username}! Stay safe online.");
+                break;
+            }
+
+            bool found = false;
+
+            string detectedSentiment = null;
+            string detectedTopic = null;
+
+            foreach (var sentiment in sentiments.Keys)
+            {
+                if (input.Contains(sentiment))
                 {
-                    Console.ForegroundColor = ConsoleColor.Cyan;
-                    Console.WriteLine($"\n{userName}, what can I assist you with? ");
-                }
-                Console.ForegroundColor = ConsoleColor.White;
-                //User's entered name 
-                Console.WriteLine($"{userName}: ");
-                //Takes user input, converts it to lower case, and trims it to ensure that the response is understood by the program.
-                string userInput = Console.ReadLine()?.ToLower().Trim();
-                LogUserInput(userInput);
-                CheckForKeywords(userInput);
-
-                userPromptCounter++;
-
-                if (userPromptCounter >= 3 && userExpressedInterest && !string.IsNullOrEmpty(userInterestTopic))
-                {
-                    string randomTopic = rememberedTopics[rnd.Next(rememberedTopics.Count)];
-                    Console.ForegroundColor = ConsoleColor.Magenta;
-                    TypeResponse($"As someone who is curious about {randomTopic}, this is particularly important.");
-                    userPromptCounter = 0;
-
-                }
-                //if the user enters "exit" the program asks the user the chatbot asks the user to rate it and then the program displays a goodbye message and ends.
-                if (userInput.Contains("exit"))
-                {
-                    TypeResponse($"Goodbye {userName}! Stay safe online.");
+                    detectedSentiment = sentiment;
                     break;
                 }
+            }
 
-                bool found = false;
-                string detectedTopic = null;
-                string detectedSentiment = null;
-               
-
-                foreach (var sentiment in sentiments.Keys)
+            foreach (var keyword in responses.Keys)
+            {
+                if (input.Contains(keyword))
                 {
-                    if (userInput.Contains(sentiment))
-                    {
-                        detectedSentiment = sentiment;
-                        break;
-                    }
+                    detectedTopic = keyword;
+                    break;
+                }
+            }
+
+            if (detectedSentiment != null && detectedTopic != null)
+            {
+                Console.ForegroundColor = ConsoleColor.Magenta;
+                TypeResponse($"\n{sentiments[detectedSentiment]}");
+
+
+                currentTopic = detectedTopic;
+                string randomReply = responses[detectedTopic][rnd.Next(responses[detectedTopic].Length)];
+                Console.ForegroundColor = ConsoleColor.White;
+
+                if (followUps.ContainsKey(detectedTopic))
+                {
+                    string followUp = followUps[detectedTopic][rnd.Next(followUps[detectedTopic].Length)];
+                    TypeResponse(followUp);
+                    awaitingFollowUpResponse = true;
+                    lastFollowUpTopic = detectedTopic;
                 }
 
-                foreach (var keyword in responses.Keys)
+
+                else
                 {
-                    if (userInput.Contains(keyword))
-                    {
-                        detectedTopic = keyword;
-                        break;
-                    }
+                    TypeResponse($"Let me know if there is anything else I can assist you with {username}?");
+                    awaitingFollowUpResponse = false;
+                    lastFollowUpTopic = null;
                 }
 
+                continue; // Skip rest of loop and wait for next input
+            }
 
-                if (detectedSentiment != null && detectedTopic != null)
+            // Detect confusion or request for details
+            if (currentTopic != null && (
+                input.Contains("explain") || input.Contains("more") || input.Contains("i don't understand") || input.Contains("what do you mean")))
+            {
+                string[] extraResponses = responses[currentTopic];
+                string deeperResponse = extraResponses[rnd.Next(extraResponses.Length)];
+                Console.ForegroundColor = ConsoleColor.White;
+                TypeResponse($"\nSure, here's more on {currentTopic}:");
+                TypeResponse(deeperResponse);
+                continue;
+            }
+            if (awaitingFollowUpResponse)
+            {
+                if (input.Contains("yes") || input.Contains("confused") || input.Contains("explain more") || input.Contains("i don't understand"))
+
                 {
-                    Console.ForegroundColor = ConsoleColor.Magenta;
-                    TypeResponse($"\n{sentiments[detectedSentiment]}");
-
-                    // Then respond with a cybersecurity fact + follow-up question
-                    currentTopic = detectedTopic;
-                    string randomReply = responses[detectedTopic][rnd.Next(responses[detectedTopic].Length)];
                     Console.ForegroundColor = ConsoleColor.White;
-                    // TypeResponse($"\n{randomReply}");
+                    string[] extraTips = responses[lastFollowUpTopic];
+                    TypeResponse(extraTips[rnd.Next(extraTips.Length)]);
 
-                    if (followUps.ContainsKey(detectedTopic))
+                    string[] followUpQs = followUps[lastFollowUpTopic];
+                    followUpIndex++;
+
+                    if (followUpIndex < followUpQs.Length)
                     {
-                        string followUp = followUps[detectedTopic][rnd.Next(followUps[detectedTopic].Length)];
-                        TypeResponse(followUp);
-                        awaitingFollowUpResponse = true;
-                        lastFollowUpTopic = detectedTopic;
+                        TypeResponse(followUpQs[followUpIndex]);
+                        inConversation = true;
                     }
-
-
                     else
                     {
-                        TypeResponse($"Let me know if there is anything else I can assist you with {userName}?");
+                        TypeResponse("Would you like to explore another topic?");
+                        // inConversation = false;
+
+                    }
+
+                    // Keep awaiting input if more follow-ups exist
+                    awaitingFollowUpResponse = followUpIndex < followUpQs.Length;
+                    continue;
+                }
+                else if (input.Contains("no"))
+                {
+                    TypeResponse("No problem! Let me know if you'd like to learn about something else.");
+                    awaitingFollowUpResponse = false;
+                    inConversation = false;
+                    followUpIndex = 0;
+                    continue;
+                }
+            }
+
+
+            foreach (var keyword in responses.Keys)
+            {
+                if (input.Contains(keyword))
+                {
+                    currentTopic = keyword;
+                    string randomReply = responses[keyword][rnd.Next(responses[keyword].Length)];
+                    Console.ForegroundColor = ConsoleColor.White;
+                    TypeResponse($"\n{randomReply}");
+
+                    if (followUps.ContainsKey(keyword))
+                    {
+                        string followUp = followUps[keyword][rnd.Next(followUps[keyword].Length)];
+                        TypeResponse(followUp);
+                        awaitingFollowUpResponse = true;
+                        lastFollowUpTopic = keyword;
+                    }
+                    else
+                    {
+                        TypeResponse("Would you like to explore another topic?");
                         awaitingFollowUpResponse = false;
                         lastFollowUpTopic = null;
                     }
 
-                    continue; // Skip rest of loop and wait for next input
-                }
-
-                if (currentTopic != null && (
-                userInput.Contains("explain") || userInput.Contains("more") || userInput.Contains("i don't understand") || userInput.Contains("what do you mean")))
-                {
-                    string[] extraResponses = responses[currentTopic];
-                    string deeperResponse = extraResponses[rnd.Next(extraResponses.Length)];
-                    Console.ForegroundColor = ConsoleColor.White;
-                    TypeResponse($"\nSure, here's more on {currentTopic}:");
-                    TypeResponse(deeperResponse);
-                    continue;
-                }
-                if (awaitingFollowUpResponse)
-                {
-                    if (userInput.Contains("yes") || userInput.Contains("confused") || userInput.Contains("explain more") || userInput.Contains("i don't understand"))
-
-                    {
-                        Console.ForegroundColor = ConsoleColor.White;
-                        string[] extraTips = responses[lastFollowUpTopic];
-                        TypeResponse(extraTips[rnd.Next(extraTips.Length)]);
-
-                        string[] followUpQs = followUps[lastFollowUpTopic];
-                        followUpIndex++;
-
-                        if (followUpIndex < followUpQs.Length)
-                        {
-                            TypeResponse(followUpQs[followUpIndex]);
-                            inConversation = true;
-                        }
-                        else
-                        {
-                            TypeResponse("Would you like to explore another topic?");
-                           
-
-                        }
-
-                      
-                        awaitingFollowUpResponse = followUpIndex < followUpQs.Length;
-                        continue;
-                    }
-                    else if (userInput.Contains("no"))
-                    {
-                        TypeResponse("No problem! Let me know if you'd like to learn about something else.");
-                        awaitingFollowUpResponse = false;
-                        inConversation = false;
-                        followUpIndex = 0;
-                        continue;
-                    }
-                }
-
-
-
-                foreach (var keyword in responses.Keys)
-                {
-                    if (userInput.Contains(keyword))
-
-                    {
-                        currentTopic = keyword;
-                        string randomReply = responses[keyword][rnd.Next(responses[keyword].Length)];
-                        Console.ForegroundColor = ConsoleColor.White;
-                        TypeResponse($"\n{randomReply}");
-
-                        if (followUps.ContainsKey(keyword))
-                        {
-                            string followUp = followUps[keyword][rnd.Next(followUps[keyword].Length)];
-                            TypeResponse(followUp);
-                            awaitingFollowUpResponse = true;
-                            lastFollowUpTopic = keyword;
-                        }
-                        else
-                        {
-                            TypeResponse("Would you like to explore another topic?");
-                            awaitingFollowUpResponse = false;
-                            lastFollowUpTopic = null;
-                        }
-
-                        found = true;
-                        break;
-                    }
-
-                }
-
-                if (!found)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    TypeResponse("I'm sorry, I don't understand that topic. Try asking about phishing, malware, password, virus, browsing, or cybersecurity.");
-                }
-            }
-        }
-
-
-
-
-        //Method to play greeting audio 
-        //Takes filePath as a parameter, this will be the name of the audio
-        static void PlayGreetingAudio(string filePath)
-        {
-            //try catch to handle unexpected errors such as file formatting issues 
-            try
-            {
-                //creates a full absolute path to a file by combining the current directory(where the app is running) with a file or relative path(filePath)
-                //(i.e the audio file)
-                string fullPath = Path.Combine(Directory.GetCurrentDirectory(), filePath);
-                //Checks if the file exists
-                if (File.Exists(fullPath))
-                {
-                    //Plays audio 
-                    SoundPlayer player = new SoundPlayer(fullPath);
-                    //halts the execution of the rest of the code until the audio is finished playing
-                    player.PlaySync();
-                }
-                //if the audio does not exist then the program will throw and error
-                else
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"Error: the file'{filePath}'was not found.");
-
-                }
-            }
-            //catch to handle exceptions 
-            catch (Exception ex)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                //message that will be thrown in the event of an unexpected error
-                Console.WriteLine($"Error playing audio: {ex.Message}");
-
-            }
-
-        }
-
-
-        //method to create a typewriter effect
-        // takes a string as a parameter, this will the chatbots output 
-        static void TypeResponse(string message)
-        {
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            // Loop through each character in the input message
-            foreach (char c in message)
-            {
-                // Write the character to the console without moving to the next line
-                Console.Write(c);
-                // Pause for 30 ms to create a typing effect
-                System.Threading.Thread.Sleep(30);
-            }
-            // Move to the next line after the message is displayed fully
-            Console.WriteLine();
-        }
-
-
-        static void CheckForKeywords(string input)
-        {
-            string[] interestKeywords = { "interested", "curious", "keen", "fascinated", "interesting", "worried", "scared", "favourite" };
-            string[] cybersecurityTopics = { "cybersecurity", "malware", "viruses", "spam", "scams", "phishing", "ransomware", "trojan", "worm", "spyware" };
-
-            string loweredInput = input.ToLower();
-
-            bool foundInterest = false;
-            bool foundTopic = false;
-            string matchedTopic = "";
-
-            foreach (string interest in interestKeywords)
-            {
-                if (loweredInput.Contains(interest))
-                {
-                    foundInterest = true;
+                    found = true;
                     break;
                 }
+
             }
 
-            foreach (string topic in cybersecurityTopics)
+            if (!found)
             {
-                if (loweredInput.Contains(topic))
-                {
-                    matchedTopic = topic;
-                    foundTopic = true;
-                    if (!rememberedTopics.Contains(topic)) rememberedTopics.Add(topic);
-                }
-            }
-
-            // If both found (not necessarily in same line)
-            if (foundInterest && foundTopic)
-            {
-                userInterestTopic = matchedTopic;
-                userExpressedInterest = true;
-                userPromptCounter = 0; // Reset counter when interest is expressed
-                Console.ForegroundColor = ConsoleColor.DarkCyan;
-                Console.WriteLine($"Maven: That's great you're interested in {matchedTopic}, I'll remember that! It's a crucial part " +
-                    $"staying safe online!");
-                Console.WriteLine($"[DEBUG] userInterestTopic: {userInterestTopic}, userExpressedInterest: {userExpressedInterest}");
+                Console.ForegroundColor = ConsoleColor.Red;
+                TypeResponse("I'm sorry, I don't understand that topic. Try asking about phishing, malware, password, virus, browsing, or cybersecurity.");
             }
 
 
-        }
-
-        static int inputCounter = 0;
-        static string chatHistoryPath = "chathistory.txt";
-
-
-        static void LogUserInput(string input)
-        {
-            inputCounter++;
-            File.AppendAllText(chatHistoryPath, $"User: {input}\n");
-
-            if (inputCounter % 3 == 0)
-            {
-                TypeResponse("Chat history saved to chathistory.txt\n");
-            }
         }
 
     }
+
+    static void TypeResponse(string message)
+    {
+        foreach (char c in message)
+        {
+            Console.Write(c);
+            Thread.Sleep(25);
+        }
+        Console.WriteLine();
+    }
+
+    static void PlayGreetingAudio(string filePath)
+    {
+        try
+        {
+            string fullPath = Path.Combine(Directory.GetCurrentDirectory(), filePath);
+            if (File.Exists(fullPath))
+            {
+                SoundPlayer player = new SoundPlayer(fullPath);
+                player.PlaySync();
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"Error: the file '{filePath}' was not found.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine($"Error playing audio: {ex.Message}");
+        }
+
+
+    }
+
+    static void CheckForKeywords(string input)
+    {
+        string[] interestKeywords = { "interested", "curious", "keen", "fascinated", "interesting", "worried", "scared", "favourite" };
+        string[] cybersecurityTopics = { "cybersecurity", "malware", "viruses", "spam", "scams", "phishing", "ransomware", "trojan", "worm", "spyware" };
+
+        string loweredInput = input.ToLower();
+
+        bool foundInterest = false;
+        bool foundTopic = false;
+        string matchedTopic = "";
+
+        foreach (string interest in interestKeywords)
+        {
+            if (loweredInput.Contains(interest))
+            {
+                foundInterest = true;
+                break;
+            }
+        }
+
+        foreach (string topic in cybersecurityTopics)
+        {
+            if (loweredInput.Contains(topic))
+            {
+                matchedTopic = topic;
+                foundTopic = true;
+                if (!rememberedTopics.Contains(topic)) rememberedTopics.Add(topic);
+            }
+        }
+
+        // If both found (not necessarily in same line)
+        if (foundInterest && foundTopic)
+        {
+            userInterestTopic = matchedTopic;
+            userExpressedInterest = true;
+            userPromptCounter = 0; // Reset counter when interest is expressed
+            Console.ForegroundColor = ConsoleColor.DarkCyan;
+            TypeResponse($"Maven: That's great you're interested in {matchedTopic}, I'll remember that! It's a crucial part " +
+                $"staying safe online!");
+
+        }
+    }
+
+    static int inputCounter = 0;
+    static string chatHistoryPath = "chathistory.txt";
+
+    static void LogUserInput(string input)
+    {
+        inputCounter++;
+        File.AppendAllText(chatHistoryPath, $"User: {input}\n");
+
+        if (inputCounter % 3 == 0)
+        {
+            TypeResponse("Chat history saved to chathistory.txt\n");
+        }
+    }
+
+
 }
