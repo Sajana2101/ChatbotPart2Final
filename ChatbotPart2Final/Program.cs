@@ -15,12 +15,11 @@ class ChatbotPart2Final
     static int userPromptCounter = 0;
     static bool userExpressedInterest = false;
 
-
-
     static void Main(string[] args)
 
 
     {
+
         // Keeps track of which follow-up reply to use next in the conversation
         int followUpIndex = 0;
         // Indicates whether the chatbot is currently engaged in an ongoing conversation
@@ -396,6 +395,23 @@ class ChatbotPart2Final
         string currentTopic = null;
         string lastFollowUpTopic = null;
         bool awaitingFollowUpResponse = false;
+         Dictionary<string, string> descriptions = new Dictionary<string, string>
+{
+    { "malware", "Malware is software specifically designed to disrupt, damage, or gain unauthorized access to a computer system." },
+    { "phishing", "Phishing is a type of online scam where attackers trick users into revealing personal information by pretending to be trustworthy entities." },
+    { "ransomware", "Ransomware is a type of malware that locks or encrypts a victim's data and demands payment to restore access." },
+    { "viruses", "A computer virus is a type of malware that, when executed, replicates by inserting copies of itself into other programs." },
+    { "cybersecurity", "Cybersecurity refers to the practice of protecting systems, networks, and programs from digital attacks." },
+    { "encryption", "Encryption is the process of converting data into a coded form to prevent unauthorized access." },
+    { "defender", "Microsoft Defender is a built-in security program in Windows that provides real-time protection against viruses and other threats." },
+    { "firewall", "A firewall is a security system that monitors and controls incoming and outgoing network traffic based on predetermined rules." },
+    { "vpn", "A VPN (Virtual Private Network) encrypts your internet connection to secure data and protect your online identity." },
+    { "updates", "Updates include patches and improvements that fix security vulnerabilities and keep your system protected." },
+    { "social engineering", "Social engineering is a manipulation technique that exploits human error to gain private information or access." },
+    { "safe browsing", "Safe browsing involves practices like using HTTPS websites, avoiding suspicious links, and not sharing personal information online." },
+    { "password", "A password is a secret string of characters used to authenticate a user and protect access to systems or data." }
+};
+
 
         while (true)
         {
@@ -409,6 +425,41 @@ class ChatbotPart2Final
             // Read user input and convert to lowercase for easy matching
             Console.ForegroundColor = ConsoleColor.Yellow;
             string input = Console.ReadLine().ToLower();
+            if (input.StartsWith("what is ")|| input.Contains("definition"))
+            {
+                string possibleTopic = input.Replace("what is ", "").Trim();
+
+                if (descriptions.ContainsKey(possibleTopic))
+                {
+                    Console.ForegroundColor = ConsoleColor.White;
+                    TypeResponse($"\nMaven: {descriptions[possibleTopic]}");
+
+                    // 🔁 Random follow-up if available
+                    if (followUps.ContainsKey(possibleTopic))
+                    {
+                        string followUp = followUps[possibleTopic][rnd.Next(followUps[possibleTopic].Length)];
+                        TypeResponse(followUp);
+                        awaitingFollowUpResponse = true;
+                        lastFollowUpTopic = possibleTopic;
+                    }
+                    else
+                    {
+                        TypeResponse("Let me know if you'd like to explore anything else.");
+                        awaitingFollowUpResponse = false;
+                        lastFollowUpTopic = null;
+                    }
+
+                    userPromptCounter++;
+                    continue;
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    TypeResponse("Hmm, I'm sorry I dont seem to understand :/. Please check your spelling or asking another cybersecurity related question!");
+                    userPromptCounter++;
+                    continue;
+                }
+            }
 
             // Log input and check for keywords (user-defined methods)
             LogUserInput(input);
@@ -636,10 +687,11 @@ class ChatbotPart2Final
     // Method to check if the user's input shows interest in any cybersecurity topic, takes user input as parameter
     static void CheckForKeywords(string input)
     {// List of words that indicate interest
-        string[] interestKeywords = { "interested", "curious", "keen", "fascinated", "interesting", "worried", "scared", "favourite" };
+        string[] interestKeywords = { "interested", "curious", "keen", "fascinated", "interesting", "favourite", "fascinating", "Like"};
 
         // List of relevant cybersecurity topics
-        string[] cybersecurityTopics = { "cybersecurity", "malware", "viruses", "spam", "scams", "phishing", "ransomware", "trojan", "worm", "spyware" };
+        string[] cybersecurityTopics = { "cybersecurity", "malware", "viruses","virus","spam", "scams", "phishing", "ransomware","vpn","firewall","firewalls",
+        "social engineering","encryption","defender","wifi","updates"};
 
         string loweredInput = input.ToLower();
 
